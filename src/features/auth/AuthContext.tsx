@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
 import {
   clearStoredSession,
   getStoredTokens,
@@ -20,6 +20,7 @@ interface AuthContextValue {
   user: AuthUser | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<AuthUser>;
+  loginWithTokens: (accessToken: string, refreshToken: string) => Promise<AuthUser>;
   logout: () => Promise<void>;
 }
 
@@ -59,6 +60,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return nextUser;
   };
 
+  const loginWithTokens = useCallback(
+    async (accessToken: string, refreshToken: string): Promise<AuthUser> => {
+      setStoredSession(accessToken, refreshToken, '{}');
+      const res = await http.get<
+        ApiEnvelope<{
+          userId: string;
+          email: string;
+          roles: UserRole[];
+        }>
+      >('/api/v1/auth/me');
+      const me = res.data.data;
+      const nextUser: AuthUser = {
+        id: me.userId,
+        email: me.email,
+        fullName: me.email,
+        roles: me.roles,
+      };
+      setStoredSession(accessToken, refreshToken, JSON.stringify(nextUser));
+      setUser(nextUser);
+      return nextUser;
+    },
+    [],
+  );
+
   const logout = async () => {
     const { refreshToken } = getStoredTokens();
     try {
@@ -72,7 +97,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: Boolean(user), login, logout }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated: Boolean(user), login, loginWithTokens, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

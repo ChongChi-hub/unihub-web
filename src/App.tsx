@@ -5,6 +5,7 @@ import { AdminUsersPage } from './features/admin/AdminUsersPage';
 import { AuthProvider, getHomeRouteForRoles, useAuth } from './features/auth/AuthContext';
 import { ForbiddenPage } from './features/auth/ForbiddenPage';
 import { LoginPage } from './features/auth/LoginPage';
+import { OAuthCallbackPage } from './features/auth/OAuthCallbackPage';
 import { ProtectedRoute } from './features/auth/ProtectedRoute';
 import { LecturerDashboardPage } from './features/lecturer/LecturerDashboardPage';
 import { StudentDashboardPage } from './features/student/StudentDashboardPage';
@@ -27,6 +28,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<RootRedirect />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
               <Route path="/403" element={<ForbiddenPage />} />
 
               <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>

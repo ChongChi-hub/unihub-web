@@ -21,7 +21,7 @@ const USER_KEY = 'unihub_user';
 
 // Base URL points to Gateway root (e.g. http://localhost:8080)
 const rawBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
-const API_ORIGIN = rawBase.replace(/\/api\/?$/, '');
+export const API_ORIGIN = rawBase.replace(/\/api\/?$/, '');
 
 export const http = axios.create({
   baseURL: API_ORIGIN,
