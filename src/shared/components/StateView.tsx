@@ -22,7 +22,13 @@ export function StateView({
     return (
       <div
         className="card"
-        style={{ padding: '48px 24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}
+        style={{
+          padding: '48px 24px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 10,
+        }}
       >
         <Loader2 size={20} className="spin" />
         <span style={{ color: 'var(--text-secondary)' }}>Đang tải dữ liệu...</span>

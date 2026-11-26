@@ -17,7 +17,12 @@ export function DataTable<T>({ columns, rows, rowKey }: DataTableProps<T>) {
     <div className="card" style={{ overflowX: 'auto' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
         <thead>
-          <tr style={{ borderBottom: '1px solid var(--border-color)', background: 'var(--bg-subtle)' }}>
+          <tr
+            style={{
+              borderBottom: '1px solid var(--border-color)',
+              background: 'var(--bg-subtle)',
+            }}
+          >
             {columns.map((col) => (
               <th
                 key={col.key}

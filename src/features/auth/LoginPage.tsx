@@ -1,4 +1,12 @@
-import { ArrowRight, BookOpen, CalendarDays, Eye, EyeOff, GraduationCap, ShieldCheck } from 'lucide-react';
+import {
+  ArrowRight,
+  BookOpen,
+  CalendarDays,
+  Eye,
+  EyeOff,
+  GraduationCap,
+  ShieldCheck,
+} from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { API_ORIGIN, extractErrorMessage } from '../../shared/api/http';
@@ -47,9 +55,7 @@ export function LoginPage() {
 
           <div className="login-hero-copy">
             <p className="login-eyebrow">Cổng đào tạo đại học</p>
-            <h1 className="login-headline">
-              Không gian học tập và quản trị học vụ thống nhất.
-            </h1>
+            <h1 className="login-headline">Không gian học tập và quản trị học vụ thống nhất.</h1>
             <p className="login-lead">
               Kết nối phòng đào tạo, giảng viên và sinh viên trên cùng một hệ thống xuyên suốt từ
               đăng ký học phần đến đánh giá kết quả.
@@ -61,21 +67,27 @@ export function LoginPage() {
               <CalendarDays size={18} color="#5ab9fc" />
               <div>
                 <div className="login-pillar-title">Quản lý đào tạo</div>
-                <div className="login-pillar-desc">Chương trình khung, học kỳ và thời khóa biểu</div>
+                <div className="login-pillar-desc">
+                  Chương trình khung, học kỳ và thời khóa biểu
+                </div>
               </div>
             </div>
             <div className="login-pillar">
               <BookOpen size={18} color="#5ab9fc" />
               <div>
                 <div className="login-pillar-title">Học tập &amp; Bài tập</div>
-                <div className="login-pillar-desc">Tài liệu môn học, tiến độ và nộp bài trực tuyến</div>
+                <div className="login-pillar-desc">
+                  Tài liệu môn học, tiến độ và nộp bài trực tuyến
+                </div>
               </div>
             </div>
             <div className="login-pillar">
               <ShieldCheck size={18} color="#5ab9fc" />
               <div>
                 <div className="login-pillar-title">Phân quyền theo vai trò</div>
-                <div className="login-pillar-desc">Tự động điều hướng cổng Quản trị, Giảng viên, Sinh viên</div>
+                <div className="login-pillar-desc">
+                  Tự động điều hướng cổng Quản trị, Giảng viên, Sinh viên
+                </div>
               </div>
             </div>
           </div>
@@ -90,7 +102,9 @@ export function LoginPage() {
               <span>Unihub</span>
             </div>
             <h2 className="login-card-title">Đăng nhập hệ thống</h2>
-            <p className="login-card-subtitle">Sử dụng tài khoản trường cấp để truy cập cổng của bạn.</p>
+            <p className="login-card-subtitle">
+              Sử dụng tài khoản trường cấp để truy cập cổng của bạn.
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="login-form">
