@@ -1,4 +1,4 @@
-import { GraduationCap, Lock, Mail } from 'lucide-react';
+import { ArrowRight, BookOpen, CalendarDays, Eye, EyeOff, GraduationCap, ShieldCheck } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { extractErrorMessage } from '../../shared/api/http';
@@ -10,6 +10,7 @@ export function LoginPage() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,125 +33,119 @@ export function LoginPage() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 20,
-      }}
-    >
-      <div className="card" style={{ width: '100%', maxWidth: 420, padding: 32, boxShadow: 'var(--shadow-md)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-          <div
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 10,
-              background: 'var(--primary-soft)',
-              color: 'var(--primary)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <GraduationCap size={22} />
+    <div className="login-shell">
+      <section className="login-brand-panel" aria-label="Giới thiệu cổng Unihub">
+        <div className="login-brand-grid" aria-hidden="true" />
+        <div className="login-brand-inner">
+          <div className="login-wordmark">
+            <span className="login-mark">
+              <GraduationCap size={20} />
+            </span>
+            <span>Unihub</span>
           </div>
-          <div>
-            <h1 style={{ margin: 0, fontSize: 22 }}>Unihub</h1>
-            <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)' }}>
-              Cổng đào tạo & học tập đại học
+
+          <div className="login-hero-copy">
+            <p className="login-eyebrow">Cổng đào tạo đại học</p>
+            <h1 className="login-headline">
+              Không gian học tập và quản trị học vụ thống nhất.
+            </h1>
+            <p className="login-lead">
+              Kết nối phòng đào tạo, giảng viên và sinh viên trên cùng một hệ thống xuyên suốt từ
+              đăng ký học phần đến đánh giá kết quả.
             </p>
           </div>
-        </div>
 
-        <form onSubmit={handleSubmit} style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {error && (
-            <div
-              style={{
-                padding: '10px 12px',
-                borderRadius: 'var(--radius-sm)',
-                background: 'var(--danger-soft)',
-                color: 'var(--danger)',
-                fontSize: 13,
-              }}
-            >
-              {error}
+          <div className="login-pillars">
+            <div className="login-pillar">
+              <CalendarDays size={18} color="#5ab9fc" />
+              <div>
+                <div className="login-pillar-title">Quản lý đào tạo</div>
+                <div className="login-pillar-desc">Chương trình khung, học kỳ và thời khóa biểu</div>
+              </div>
             </div>
-          )}
+            <div className="login-pillar">
+              <BookOpen size={18} color="#5ab9fc" />
+              <div>
+                <div className="login-pillar-title">Học tập &amp; Bài tập</div>
+                <div className="login-pillar-desc">Tài liệu môn học, tiến độ và nộp bài trực tuyến</div>
+              </div>
+            </div>
+            <div className="login-pillar">
+              <ShieldCheck size={18} color="#5ab9fc" />
+              <div>
+                <div className="login-pillar-title">Phân quyền theo vai trò</div>
+                <div className="login-pillar-desc">Tự động điều hướng cổng Quản trị, Giảng viên, Sinh viên</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-          <div>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 6 }}>
-              Email
-            </label>
-            <div style={{ position: 'relative' }}>
-              <Mail
-                size={16}
-                style={{
-                  position: 'absolute',
-                  left: 12,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: 'var(--text-muted)',
-                }}
-              />
+      <main className="login-form-panel">
+        <div className="login-card">
+          <div className="login-card-header">
+            <div className="login-mobile-brand">
+              <GraduationCap size={20} color="#5ab9fc" />
+              <span>Unihub</span>
+            </div>
+            <h2 className="login-card-title">Đăng nhập hệ thống</h2>
+            <p className="login-card-subtitle">Sử dụng tài khoản trường cấp để truy cập cổng của bạn.</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="login-form">
+            {error && (
+              <div className="login-error" role="alert">
+                {error}
+              </div>
+            )}
+
+            <div className="login-field">
+              <label htmlFor="login-email" className="login-label">
+                Email
+              </label>
               <input
+                id="login-email"
                 type="email"
+                autoComplete="email"
                 required
-                className="input"
-                style={{ paddingLeft: 36 }}
-                placeholder="admin@unihub.edu.vn"
+                className="login-input"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-          </div>
 
-          <div>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 6 }}>
-              Mật khẩu
-            </label>
-            <div style={{ position: 'relative' }}>
-              <Lock
-                size={16}
-                style={{
-                  position: 'absolute',
-                  left: 12,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: 'var(--text-muted)',
-                }}
-              />
-              <input
-                type="password"
-                required
-                className="input"
-                style={{ paddingLeft: 36 }}
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+            <div className="login-field">
+              <label htmlFor="login-password" className="login-label">
+                Mật khẩu
+              </label>
+              <div className="login-password-wrap">
+                <input
+                  id="login-password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  required
+                  className="login-input login-input-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="login-eye-btn"
+                  aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                  onClick={() => setShowPassword((prev) => !prev)}
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
             </div>
-          </div>
 
-          <button type="submit" className="btn btn-primary" disabled={submitting} style={{ marginTop: 4 }}>
-            {submitting ? 'Đang đăng nhập...' : 'Đăng nhập'}
-          </button>
-        </form>
-
-        <div
-          style={{
-            marginTop: 20,
-            paddingTop: 16,
-            borderTop: '1px solid var(--border-color)',
-            fontSize: 12,
-            color: 'var(--text-muted)',
-          }}
-        >
-          Tài khoản dev mặc định: <code>admin@unihub.edu.vn</code> / <code>Admin@123</code>
+            <button type="submit" className="login-submit" disabled={submitting}>
+              <span>{submitting ? 'Đang xác thực...' : 'Đăng nhập'}</span>
+              {!submitting && <ArrowRight size={16} />}
+            </button>
+          </form>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
