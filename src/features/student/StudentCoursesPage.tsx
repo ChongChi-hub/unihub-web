@@ -1,5 +1,21 @@
-import { BookOpen, CheckCircle, ClipboardList, Download, Upload } from 'lucide-react';
+import {
+  Award,
+  BookOpen,
+  CalendarCheck,
+  CheckCircle,
+  ClipboardList,
+  Download,
+  HelpCircle,
+  Megaphone,
+  Upload,
+} from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from 'react';
+import {
+  StudentAnnouncementsPanel,
+  StudentAttendancePanel,
+  StudentGradesPanel,
+  StudentQuizzesPanel,
+} from './StudentAssessmentPanels';
 import { extractErrorMessage, http, type ApiEnvelope } from '../../shared/api/http';
 import {
   downloadPresignedFile,
@@ -29,7 +45,9 @@ export function StudentCoursesPage() {
   const [courses, setCourses] = useState<EnrolledCourseSummary[]>([]);
   const [selectedCourseId, setSelectedCourseId] = useState('');
 
-  const [tab, setTab] = useState<'lms' | 'assignments'>('lms');
+  const [tab, setTab] = useState<
+    'lms' | 'assignments' | 'quizzes' | 'grades' | 'attendance' | 'announcements'
+  >('lms');
   const [chapters, setChapters] = useState<ChapterDto[]>([]);
   const [progress, setProgress] = useState<ProgressSummaryDto | null>(null);
   const [assignments, setAssignments] = useState<AssignmentDto[]>([]);
@@ -342,7 +360,7 @@ export function StudentCoursesPage() {
               </div>
             )}
 
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               <button
                 type="button"
                 className={`btn ${tab === 'lms' ? 'btn-primary' : 'btn-ghost'}`}
@@ -359,225 +377,276 @@ export function StudentCoursesPage() {
                 <ClipboardList size={16} />
                 <span>Bài tập ({assignments.length})</span>
               </button>
+              <button
+                type="button"
+                className={`btn ${tab === 'quizzes' ? 'btn-primary' : 'btn-ghost'}`}
+                onClick={() => setTab('quizzes')}
+              >
+                <HelpCircle size={16} />
+                <span>Quiz</span>
+              </button>
+              <button
+                type="button"
+                className={`btn ${tab === 'grades' ? 'btn-primary' : 'btn-ghost'}`}
+                onClick={() => setTab('grades')}
+              >
+                <Award size={16} />
+                <span>Bảng điểm</span>
+              </button>
+              <button
+                type="button"
+                className={`btn ${tab === 'attendance' ? 'btn-primary' : 'btn-ghost'}`}
+                onClick={() => setTab('attendance')}
+              >
+                <CalendarCheck size={16} />
+                <span>Điểm danh</span>
+              </button>
+              <button
+                type="button"
+                className={`btn ${tab === 'announcements' ? 'btn-primary' : 'btn-ghost'}`}
+                onClick={() => setTab('announcements')}
+              >
+                <Megaphone size={16} />
+                <span>Thông báo lớp</span>
+              </button>
             </div>
 
-            <StateView
-              loading={workspaceLoading}
-              error={null}
-              empty={tab === 'lms' ? chapters.length === 0 : assignments.length === 0}
-              emptyText={
-                tab === 'lms' ? 'Giảng viên chưa đăng bài giảng nào.' : 'Chưa có bài tập nào.'
-              }
-            >
-              {tab === 'lms' ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  {chapters.map((ch) => (
-                    <div key={ch.id} className="card" style={{ padding: 16 }}>
-                      <h4 style={{ margin: '0 0 12px 0' }}>{ch.title}</h4>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                        {ch.lessons.map((ls) => (
-                          <div
-                            key={ls.id}
-                            style={{
-                              padding: 12,
-                              borderRadius: 8,
-                              background: 'var(--bg-subtle)',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              gap: 8,
-                            }}
-                          >
+            {tab === 'quizzes' && selectedCourseId ? (
+              <StudentQuizzesPanel courseSectionId={selectedCourseId} />
+            ) : tab === 'grades' && selectedCourseId ? (
+              <StudentGradesPanel courseSectionId={selectedCourseId} />
+            ) : tab === 'attendance' && selectedCourseId ? (
+              <StudentAttendancePanel courseSectionId={selectedCourseId} />
+            ) : tab === 'announcements' && selectedCourseId ? (
+              <StudentAnnouncementsPanel courseSectionId={selectedCourseId} />
+            ) : (
+              <StateView
+                loading={workspaceLoading}
+                error={null}
+                empty={tab === 'lms' ? chapters.length === 0 : assignments.length === 0}
+                emptyText={
+                  tab === 'lms' ? 'Giảng viên chưa đăng bài giảng nào.' : 'Chưa có bài tập nào.'
+                }
+              >
+                {tab === 'lms' ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {chapters.map((ch) => (
+                      <div key={ch.id} className="card" style={{ padding: 16 }}>
+                        <h4 style={{ margin: '0 0 12px 0' }}>{ch.title}</h4>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                          {ch.lessons.map((ls) => (
                             <div
+                              key={ls.id}
                               style={{
+                                padding: 12,
+                                borderRadius: 8,
+                                background: 'var(--bg-subtle)',
                                 display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
+                                flexDirection: 'column',
                                 gap: 8,
                               }}
                             >
-                              <strong>{ls.title}</strong>
-                              <button
-                                type="button"
-                                className="btn btn-ghost"
-                                style={{ padding: '4px 10px', fontSize: 12 }}
-                                onClick={() => void handleMarkComplete(ls.id)}
-                              >
-                                <CheckCircle size={14} />
-                                <span>Hoàn thành</span>
-                              </button>
-                            </div>
-                            {ls.content && (
-                              <p
-                                style={{ margin: 0, fontSize: 13, color: 'var(--text-secondary)' }}
-                              >
-                                {ls.content}
-                              </p>
-                            )}
-                            {ls.videoUrl && (
-                              <a
-                                href={ls.videoUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                style={{ fontSize: 13, color: 'var(--primary)' }}
-                              >
-                                Xem video bài giảng
-                              </a>
-                            )}
-                            {ls.attachments.length > 0 && (
-                              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                                {ls.attachments.map((att) => (
-                                  <button
-                                    key={att.id}
-                                    type="button"
-                                    className="btn btn-ghost"
-                                    style={{ padding: '4px 8px', fontSize: 12 }}
-                                    onClick={() => void downloadPresignedFile(att.fileId)}
-                                  >
-                                    <Download size={13} />
-                                    <span>{att.fileName}</span>
-                                  </button>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  {assignments.map((asm) => {
-                    const subs = mySubmissions[asm.id] ?? [];
-                    const latest = subs[0];
-                    return (
-                      <div
-                        key={asm.id}
-                        className="card"
-                        style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}
-                      >
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'flex-start',
-                            gap: 12,
-                          }}
-                        >
-                          <div>
-                            <h4 style={{ margin: 0 }}>{asm.title}</h4>
-                            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
-                              Hạn nộp: {new Date(asm.dueAt).toLocaleString('vi-VN')} • Điểm tối đa:{' '}
-                              {asm.maxScore}
-                              {asm.allowLate ? ' • Cho phép nộp trễ' : ''}
-                            </div>
-                          </div>
-                          <button
-                            type="button"
-                            className="btn btn-primary"
-                            style={{ padding: '6px 12px', fontSize: 13 }}
-                            onClick={() => setSubmitAssignment(asm)}
-                          >
-                            <Upload size={14} />
-                            <span>{latest ? 'Nộp lại' : 'Nộp bài'}</span>
-                          </button>
-                        </div>
-
-                        {asm.description && (
-                          <p style={{ margin: 0, fontSize: 13, color: 'var(--text-secondary)' }}>
-                            {asm.description}
-                          </p>
-                        )}
-
-                        {asm.attachmentFileId && (
-                          <button
-                            type="button"
-                            className="btn btn-ghost"
-                            style={{ width: 'fit-content', padding: '4px 8px', fontSize: 12 }}
-                            onClick={() => void downloadPresignedFile(asm.attachmentFileId!)}
-                          >
-                            <Download size={13} />
-                            <span>Tải đề bài đính kèm</span>
-                          </button>
-                        )}
-
-                        {subs.length > 0 && (
-                          <div
-                            style={{
-                              borderTop: '1px solid var(--border-color)',
-                              paddingTop: 10,
-                              display: 'flex',
-                              flexDirection: 'column',
-                              gap: 6,
-                            }}
-                          >
-                            <div style={{ fontSize: 12, fontWeight: 600 }}>
-                              Lịch sử nộp bài ({subs.length} lần)
-                            </div>
-                            {subs.map((s) => (
                               <div
-                                key={s.id}
                                 style={{
                                   display: 'flex',
                                   justifyContent: 'space-between',
                                   alignItems: 'center',
-                                  fontSize: 13,
-                                  padding: '6px 10px',
-                                  borderRadius: 6,
-                                  background: 'var(--bg-subtle)',
+                                  gap: 8,
                                 }}
                               >
-                                <div>
-                                  <span>
-                                    Lần #{s.version} •{' '}
-                                    {new Date(s.submittedAt).toLocaleString('vi-VN')}
-                                  </span>
-                                  {s.late && (
-                                    <span className="badge badge-warning" style={{ marginLeft: 8 }}>
-                                      Nộp trễ
-                                    </span>
-                                  )}
-                                  {s.feedback && (
-                                    <div
-                                      style={{
-                                        fontSize: 12,
-                                        color: 'var(--text-muted)',
-                                        marginTop: 2,
-                                      }}
-                                    >
-                                      Nhận xét: {s.feedback}
-                                    </div>
-                                  )}
-                                </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                  {s.fileId && (
+                                <strong>{ls.title}</strong>
+                                <button
+                                  type="button"
+                                  className="btn btn-ghost"
+                                  style={{ padding: '4px 10px', fontSize: 12 }}
+                                  onClick={() => void handleMarkComplete(ls.id)}
+                                >
+                                  <CheckCircle size={14} />
+                                  <span>Hoàn thành</span>
+                                </button>
+                              </div>
+                              {ls.content && (
+                                <p
+                                  style={{
+                                    margin: 0,
+                                    fontSize: 13,
+                                    color: 'var(--text-secondary)',
+                                  }}
+                                >
+                                  {ls.content}
+                                </p>
+                              )}
+                              {ls.videoUrl && (
+                                <a
+                                  href={ls.videoUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  style={{ fontSize: 13, color: 'var(--primary)' }}
+                                >
+                                  Xem video bài giảng
+                                </a>
+                              )}
+                              {ls.attachments.length > 0 && (
+                                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                                  {ls.attachments.map((att) => (
                                     <button
+                                      key={att.id}
                                       type="button"
                                       className="btn btn-ghost"
-                                      style={{ padding: '3px 8px', fontSize: 12 }}
-                                      onClick={() => void downloadPresignedFile(s.fileId!)}
+                                      style={{ padding: '4px 8px', fontSize: 12 }}
+                                      onClick={() => void downloadPresignedFile(att.fileId)}
                                     >
-                                      Tệp đã nộp
+                                      <Download size={13} />
+                                      <span>{att.fileName}</span>
                                     </button>
-                                  )}
-                                  <span
-                                    className={`badge ${s.score !== null ? 'badge-success' : 'badge-primary'}`}
-                                  >
-                                    {s.score !== null
-                                      ? `${s.score}/${asm.maxScore} điểm`
-                                      : 'Chờ chấm'}
-                                  </span>
+                                  ))}
                                 </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    );
-                  })}
-                </div>
-              )}
-            </StateView>
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {assignments.map((asm) => {
+                      const subs = mySubmissions[asm.id] ?? [];
+                      const latest = subs[0];
+                      return (
+                        <div
+                          key={asm.id}
+                          className="card"
+                          style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'flex-start',
+                              gap: 12,
+                            }}
+                          >
+                            <div>
+                              <h4 style={{ margin: 0 }}>{asm.title}</h4>
+                              <div
+                                style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}
+                              >
+                                Hạn nộp: {new Date(asm.dueAt).toLocaleString('vi-VN')} • Điểm tối
+                                đa: {asm.maxScore}
+                                {asm.allowLate ? ' • Cho phép nộp trễ' : ''}
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              className="btn btn-primary"
+                              style={{ padding: '6px 12px', fontSize: 13 }}
+                              onClick={() => setSubmitAssignment(asm)}
+                            >
+                              <Upload size={14} />
+                              <span>{latest ? 'Nộp lại' : 'Nộp bài'}</span>
+                            </button>
+                          </div>
+
+                          {asm.description && (
+                            <p style={{ margin: 0, fontSize: 13, color: 'var(--text-secondary)' }}>
+                              {asm.description}
+                            </p>
+                          )}
+
+                          {asm.attachmentFileId && (
+                            <button
+                              type="button"
+                              className="btn btn-ghost"
+                              style={{ width: 'fit-content', padding: '4px 8px', fontSize: 12 }}
+                              onClick={() => void downloadPresignedFile(asm.attachmentFileId!)}
+                            >
+                              <Download size={13} />
+                              <span>Tải đề bài đính kèm</span>
+                            </button>
+                          )}
+
+                          {subs.length > 0 && (
+                            <div
+                              style={{
+                                borderTop: '1px solid var(--border-color)',
+                                paddingTop: 10,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 6,
+                              }}
+                            >
+                              <div style={{ fontSize: 12, fontWeight: 600 }}>
+                                Lịch sử nộp bài ({subs.length} lần)
+                              </div>
+                              {subs.map((s) => (
+                                <div
+                                  key={s.id}
+                                  style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    fontSize: 13,
+                                    padding: '6px 10px',
+                                    borderRadius: 6,
+                                    background: 'var(--bg-subtle)',
+                                  }}
+                                >
+                                  <div>
+                                    <span>
+                                      Lần #{s.version} •{' '}
+                                      {new Date(s.submittedAt).toLocaleString('vi-VN')}
+                                    </span>
+                                    {s.late && (
+                                      <span
+                                        className="badge badge-warning"
+                                        style={{ marginLeft: 8 }}
+                                      >
+                                        Nộp trễ
+                                      </span>
+                                    )}
+                                    {s.feedback && (
+                                      <div
+                                        style={{
+                                          fontSize: 12,
+                                          color: 'var(--text-muted)',
+                                          marginTop: 2,
+                                        }}
+                                      >
+                                        Nhận xét: {s.feedback}
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    {s.fileId && (
+                                      <button
+                                        type="button"
+                                        className="btn btn-ghost"
+                                        style={{ padding: '3px 8px', fontSize: 12 }}
+                                        onClick={() => void downloadPresignedFile(s.fileId!)}
+                                      >
+                                        Tệp đã nộp
+                                      </button>
+                                    )}
+                                    <span
+                                      className={`badge ${s.score !== null ? 'badge-success' : 'badge-primary'}`}
+                                    >
+                                      {s.score !== null
+                                        ? `${s.score}/${asm.maxScore} điểm`
+                                        : 'Chờ chấm'}
+                                    </span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </StateView>
+            )}
           </div>
         </div>
       </StateView>

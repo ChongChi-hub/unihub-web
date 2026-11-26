@@ -4,14 +4,23 @@ import {
   ArrowUp,
   Award,
   BookOpen,
+  CalendarCheck,
   ClipboardList,
   Download,
+  HelpCircle,
+  Megaphone,
   Paperclip,
   Plus,
   Trash2,
   Users,
 } from 'lucide-react';
 import { useCallback, useEffect, useState, type ChangeEvent, type FormEvent } from 'react';
+import {
+  LecturerAnnouncementsPanel,
+  LecturerAttendancePanel,
+  LecturerGradesPanel,
+  LecturerQuizzesPanel,
+} from './LecturerAssessmentPanels';
 import { Link, useParams } from 'react-router-dom';
 import { extractErrorMessage, http, type ApiEnvelope } from '../../shared/api/http';
 import {
@@ -31,7 +40,9 @@ export function LecturerCourseWorkspacePage() {
   const { sectionId = '' } = useParams();
   const { showToast } = useToast();
 
-  const [tab, setTab] = useState<'lms' | 'assignments' | 'students'>('lms');
+  const [tab, setTab] = useState<
+    'lms' | 'assignments' | 'quizzes' | 'grades' | 'attendance' | 'announcements' | 'students'
+  >('lms');
   const [chapters, setChapters] = useState<ChapterDto[]>([]);
   const [assignments, setAssignments] = useState<AssignmentDto[]>([]);
   const [students, setStudents] = useState<EnrollmentDto[]>([]);
@@ -316,9 +327,49 @@ export function LecturerCourseWorkspacePage() {
           <Users size={16} />
           <span>Sinh viên ({students.length})</span>
         </button>
+        <button
+          type="button"
+          className={`btn ${tab === 'quizzes' ? 'btn-primary' : 'btn-ghost'}`}
+          onClick={() => setTab('quizzes')}
+        >
+          <HelpCircle size={16} />
+          <span>Quiz</span>
+        </button>
+        <button
+          type="button"
+          className={`btn ${tab === 'grades' ? 'btn-primary' : 'btn-ghost'}`}
+          onClick={() => setTab('grades')}
+        >
+          <Award size={16} />
+          <span>Bảng điểm</span>
+        </button>
+        <button
+          type="button"
+          className={`btn ${tab === 'attendance' ? 'btn-primary' : 'btn-ghost'}`}
+          onClick={() => setTab('attendance')}
+        >
+          <CalendarCheck size={16} />
+          <span>Điểm danh</span>
+        </button>
+        <button
+          type="button"
+          className={`btn ${tab === 'announcements' ? 'btn-primary' : 'btn-ghost'}`}
+          onClick={() => setTab('announcements')}
+        >
+          <Megaphone size={16} />
+          <span>Thông báo lớp</span>
+        </button>
       </div>
 
       <StateView loading={loading} error={error} empty={false} onRetry={loadAll}>
+        {tab === 'quizzes' && <LecturerQuizzesPanel courseSectionId={sectionId} />}
+        {tab === 'grades' && (
+          <LecturerGradesPanel courseSectionId={sectionId} students={students} />
+        )}
+        {tab === 'attendance' && (
+          <LecturerAttendancePanel courseSectionId={sectionId} students={students} />
+        )}
+        {tab === 'announcements' && <LecturerAnnouncementsPanel courseSectionId={sectionId} />}
         {tab === 'lms' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
