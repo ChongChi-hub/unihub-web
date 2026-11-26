@@ -1,0 +1,18 @@
+# OS & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Node / Build
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+*.log
+coverage/
