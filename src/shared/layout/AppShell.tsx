@@ -1,4 +1,5 @@
 import {
+  Bell,
   BookOpen,
   Calendar,
   GraduationCap,
@@ -10,8 +11,10 @@ import {
   UserCircle,
   Users,
 } from 'lucide-react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth, type UserRole } from '../../features/auth/AuthContext';
+import { http, type ApiEnvelope } from '../api/http';
 import { useTheme } from '../theme/ThemeProvider';
 
 interface NavItem {
@@ -31,6 +34,12 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/student/enroll', label: 'Đăng ký & TKB', icon: Calendar, roles: ['STUDENT'] },
   { to: '/student/courses', label: 'Lớp học & LMS', icon: BookOpen, roles: ['STUDENT'] },
   {
+    to: '/notifications',
+    label: 'Thông báo',
+    icon: Bell,
+    roles: ['ADMIN', 'LECTURER', 'STUDENT'],
+  },
+  {
     to: '/profile',
     label: 'Hồ sơ cá nhân',
     icon: UserCircle,
@@ -42,6 +51,22 @@ export function AppShell() {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    let active = true;
+    http
+      .get<ApiEnvelope<{ unreadCount: number }>>('/api/v1/notifications/unread-count')
+      .then((res) => {
+        if (active) setUnreadCount(res.data.data?.unreadCount ?? 0);
+      })
+      .catch(() => {
+        // ignore if notification-service is offline
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const visibleNav = NAV_ITEMS.filter((item) =>
     item.roles.some((role) => user?.roles.includes(role)),
@@ -132,6 +157,19 @@ export function AppShell() {
             gap: 10,
           }}
         >
+          <Link
+            to="/notifications"
+            className="btn btn-ghost"
+            title="Thông báo"
+            style={{ position: 'relative', textDecoration: 'none' }}
+          >
+            <Bell size={16} />
+            {unreadCount > 0 && (
+              <span className="badge badge-danger" style={{ fontSize: 11, padding: '1px 6px' }}>
+                {unreadCount}
+              </span>
+            )}
+          </Link>
           <button
             type="button"
             className="btn btn-ghost"

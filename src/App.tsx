@@ -10,6 +10,7 @@ import { OAuthCallbackPage } from './features/auth/OAuthCallbackPage';
 import { ProtectedRoute } from './features/auth/ProtectedRoute';
 import { LecturerCourseWorkspacePage } from './features/lecturer/LecturerCourseWorkspacePage';
 import { LecturerDashboardPage } from './features/lecturer/LecturerDashboardPage';
+import { NotificationsPage } from './features/notifications/NotificationsPage';
 import { ProfilePage } from './features/profile/ProfilePage';
 import { StudentCoursesPage } from './features/student/StudentCoursesPage';
 import { StudentDashboardPage } from './features/student/StudentDashboardPage';
@@ -65,6 +66,7 @@ export default function App() {
 
               <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'LECTURER', 'STUDENT']} />}>
                 <Route element={<AppShell />}>
+                  <Route path="/notifications" element={<NotificationsPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                 </Route>
               </Route>
