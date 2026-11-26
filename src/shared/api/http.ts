@@ -86,7 +86,8 @@ async function performRefresh(): Promise<string | null> {
 http.interceptors.response.use(
   (response) => response,
   async (error: AxiosError<ApiErrorPayload>) => {
-    const original = error.config as (InternalAxiosRequestConfig & { _retry?: boolean }) | undefined;
+    const original = error.config as
+      (InternalAxiosRequestConfig & { _retry?: boolean }) | undefined;
     if (
       error.response?.status === 401 &&
       original &&

@@ -1,10 +1,13 @@
 import {
   BookOpen,
+  Calendar,
   GraduationCap,
+  Layers,
   LayoutDashboard,
   LogOut,
   Moon,
   Sun,
+  UserCircle,
   Users,
 } from 'lucide-react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
@@ -22,8 +25,17 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/admin', label: 'Tổng quan Admin', icon: LayoutDashboard, roles: ['ADMIN'] },
   { to: '/admin/users', label: 'Người dùng', icon: Users, roles: ['ADMIN'] },
   { to: '/admin/academic', label: 'Danh mục học thuật', icon: BookOpen, roles: ['ADMIN'] },
+  { to: '/admin/sections', label: 'Lớp học phần', icon: Layers, roles: ['ADMIN'] },
   { to: '/lecturer', label: 'Cổng Giảng viên', icon: GraduationCap, roles: ['LECTURER'] },
-  { to: '/student', label: 'Cổng Sinh viên', icon: BookOpen, roles: ['STUDENT'] },
+  { to: '/student', label: 'Cổng Sinh viên', icon: LayoutDashboard, roles: ['STUDENT'] },
+  { to: '/student/enroll', label: 'Đăng ký & TKB', icon: Calendar, roles: ['STUDENT'] },
+  { to: '/student/courses', label: 'Lớp học & LMS', icon: BookOpen, roles: ['STUDENT'] },
+  {
+    to: '/profile',
+    label: 'Hồ sơ cá nhân',
+    icon: UserCircle,
+    roles: ['ADMIN', 'LECTURER', 'STUDENT'],
+  },
 ];
 
 export function AppShell() {
@@ -65,7 +77,7 @@ export function AppShell() {
               <NavLink
                 key={item.to}
                 to={item.to}
-                end={item.to === '/admin'}
+                end={item.to === '/admin' || item.to === '/student' || item.to === '/lecturer'}
                 style={({ isActive }) => ({
                   display: 'flex',
                   alignItems: 'center',
@@ -120,7 +132,12 @@ export function AppShell() {
             gap: 10,
           }}
         >
-          <button type="button" className="btn btn-ghost" onClick={toggleTheme} title="Đổi giao diện">
+          <button
+            type="button"
+            className="btn btn-ghost"
+            onClick={toggleTheme}
+            title="Đổi giao diện"
+          >
             {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
           </button>
           <button type="button" className="btn btn-ghost" onClick={handleLogout}>

@@ -94,7 +94,9 @@ export function AdminUsersPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+      <div
+        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}
+      >
         <h2 style={{ margin: 0 }}>Quản lý người dùng</h2>
         <div style={{ display: 'flex', gap: 8, width: 320 }}>
           <input
