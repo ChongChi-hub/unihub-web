@@ -1,0 +1,38 @@
+name: CD - Publish Web Image to GHCR
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    name: Build & Push Web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Lowercase repository owner
+        id: meta
+        run: echo "owner=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deploy/Dockerfile
+          push: true
+          build-args: |
+            VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL || 'http://api.unihub.localhost/api' }}
+          tags: |
+            ghcr.io/${{ steps.meta.outputs.owner }}/unihub-web:${{ github.sha }}
+            ghcr.io/${{ steps.meta.outputs.owner }}/unihub-web:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
