@@ -28,6 +28,7 @@ import {
   type TimetableSlotDto,
 } from '../../shared/api/sprint2Api';
 import { Modal } from '../../shared/components/Modal';
+import { LessonCommentsPanel } from '../../shared/components/LessonCommentsPanel';
 import { StateView } from '../../shared/components/StateView';
 import { useToast } from '../../shared/components/ToastProvider';
 
@@ -502,6 +503,7 @@ export function StudentCoursesPage() {
                                   ))}
                                 </div>
                               )}
+                              <LessonCommentsPanel lessonId={ls.id} />
                             </div>
                           ))}
                         </div>
