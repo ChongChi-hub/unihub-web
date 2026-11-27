@@ -4,6 +4,7 @@ import {
   ArrowUp,
   Award,
   BookOpen,
+  Bot,
   CalendarCheck,
   ClipboardList,
   Download,
@@ -33,6 +34,7 @@ import {
   type SubmissionDto,
 } from '../../shared/api/sprint2Api';
 import { Modal } from '../../shared/components/Modal';
+import { AiAssistantPanel } from '../../shared/components/AiAssistantPanel';
 import { LessonCommentsPanel } from '../../shared/components/LessonCommentsPanel';
 import { StateView } from '../../shared/components/StateView';
 import { useToast } from '../../shared/components/ToastProvider';
@@ -42,7 +44,14 @@ export function LecturerCourseWorkspacePage() {
   const { showToast } = useToast();
 
   const [tab, setTab] = useState<
-    'lms' | 'assignments' | 'quizzes' | 'grades' | 'attendance' | 'announcements' | 'students'
+    | 'lms'
+    | 'assignments'
+    | 'quizzes'
+    | 'grades'
+    | 'attendance'
+    | 'announcements'
+    | 'ai'
+    | 'students'
   >('lms');
   const [chapters, setChapters] = useState<ChapterDto[]>([]);
   const [assignments, setAssignments] = useState<AssignmentDto[]>([]);
@@ -360,6 +369,14 @@ export function LecturerCourseWorkspacePage() {
           <Megaphone size={16} />
           <span>Thông báo lớp</span>
         </button>
+        <button
+          type="button"
+          className={`btn ${tab === 'ai' ? 'btn-primary' : 'btn-ghost'}`}
+          onClick={() => setTab('ai')}
+        >
+          <Bot size={16} />
+          <span>Trợ giảng AI</span>
+        </button>
       </div>
 
       <StateView loading={loading} error={error} empty={false} onRetry={loadAll}>
@@ -371,6 +388,7 @@ export function LecturerCourseWorkspacePage() {
           <LecturerAttendancePanel courseSectionId={sectionId} students={students} />
         )}
         {tab === 'announcements' && <LecturerAnnouncementsPanel courseSectionId={sectionId} />}
+        {tab === 'ai' && <AiAssistantPanel courseSectionId={sectionId} canIndex />}
         {tab === 'lms' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
