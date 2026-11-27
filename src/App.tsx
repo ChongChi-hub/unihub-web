@@ -12,6 +12,7 @@ import { LecturerCourseWorkspacePage } from './features/lecturer/LecturerCourseW
 import { LecturerDashboardPage } from './features/lecturer/LecturerDashboardPage';
 import { NotificationsPage } from './features/notifications/NotificationsPage';
 import { ProfilePage } from './features/profile/ProfilePage';
+import { ReportsPage } from './features/reports/ReportsPage';
 import { StudentCoursesPage } from './features/student/StudentCoursesPage';
 import { StudentDashboardPage } from './features/student/StudentDashboardPage';
 import { StudentEnrollPage } from './features/student/StudentEnrollPage';
@@ -67,6 +68,7 @@ export default function App() {
               <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'LECTURER', 'STUDENT']} />}>
                 <Route element={<AppShell />}>
                   <Route path="/notifications" element={<NotificationsPage />} />
+                  <Route path="/reports" element={<ReportsPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                 </Route>
               </Route>

@@ -1,6 +1,7 @@
 import {
   Award,
   BookOpen,
+  Bot,
   CalendarCheck,
   CheckCircle,
   ClipboardList,
@@ -28,6 +29,7 @@ import {
   type TimetableSlotDto,
 } from '../../shared/api/sprint2Api';
 import { Modal } from '../../shared/components/Modal';
+import { AiAssistantPanel } from '../../shared/components/AiAssistantPanel';
 import { LessonCommentsPanel } from '../../shared/components/LessonCommentsPanel';
 import { StateView } from '../../shared/components/StateView';
 import { useToast } from '../../shared/components/ToastProvider';
@@ -47,7 +49,7 @@ export function StudentCoursesPage() {
   const [selectedCourseId, setSelectedCourseId] = useState('');
 
   const [tab, setTab] = useState<
-    'lms' | 'assignments' | 'quizzes' | 'grades' | 'attendance' | 'announcements'
+    'lms' | 'assignments' | 'quizzes' | 'grades' | 'attendance' | 'announcements' | 'ai'
   >('lms');
   const [chapters, setChapters] = useState<ChapterDto[]>([]);
   const [progress, setProgress] = useState<ProgressSummaryDto | null>(null);
@@ -410,6 +412,14 @@ export function StudentCoursesPage() {
                 <Megaphone size={16} />
                 <span>Thông báo lớp</span>
               </button>
+              <button
+                type="button"
+                className={`btn ${tab === 'ai' ? 'btn-primary' : 'btn-ghost'}`}
+                onClick={() => setTab('ai')}
+              >
+                <Bot size={16} />
+                <span>Trợ giảng AI</span>
+              </button>
             </div>
 
             {tab === 'quizzes' && selectedCourseId ? (
@@ -420,6 +430,8 @@ export function StudentCoursesPage() {
               <StudentAttendancePanel courseSectionId={selectedCourseId} />
             ) : tab === 'announcements' && selectedCourseId ? (
               <StudentAnnouncementsPanel courseSectionId={selectedCourseId} />
+            ) : tab === 'ai' && selectedCourseId ? (
+              <AiAssistantPanel courseSectionId={selectedCourseId} />
             ) : (
               <StateView
                 loading={workspaceLoading}

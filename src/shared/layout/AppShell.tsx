@@ -1,4 +1,5 @@
 import {
+  BarChart3,
   Bell,
   BookOpen,
   Calendar,
@@ -37,6 +38,12 @@ const NAV_ITEMS: NavItem[] = [
     to: '/notifications',
     label: 'Thông báo',
     icon: Bell,
+    roles: ['ADMIN', 'LECTURER', 'STUDENT'],
+  },
+  {
+    to: '/reports',
+    label: 'Báo cáo & Cảnh báo',
+    icon: BarChart3,
     roles: ['ADMIN', 'LECTURER', 'STUDENT'],
   },
   {
